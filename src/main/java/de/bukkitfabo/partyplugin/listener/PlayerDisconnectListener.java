@@ -1,6 +1,8 @@
-package de.BukkitFabo.Listener;
+package de.bukkitfabo.partyplugin.listener;
 
-import de.BukkitFabo.Party.PartyManager;
+
+import de.bukkitfabo.partyplugin.Main;
+import de.bukkitfabo.partyplugin.party.PartyManager;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
@@ -13,7 +15,7 @@ public class PlayerDisconnectListener implements Listener {
 		ProxiedPlayer p = e.getPlayer();
 		
 		if(PartyManager.playerparty.containsKey(p)) {
-			PartyManager.removePlayerFromParty(p, PartyManager.playerparty.get(p));
+			Main.getPartyManager().removePlayerFromParty(p, PartyManager.playerparty.get(p));
 		}
 		
 	}

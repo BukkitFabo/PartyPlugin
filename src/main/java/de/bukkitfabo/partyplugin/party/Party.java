@@ -1,4 +1,5 @@
-package de.BukkitFabo.Party;
+package de.bukkitfabo.partyplugin.party;
+
 
 import java.util.ArrayList;
 
@@ -9,23 +10,24 @@ public class Party {
 
 	public ProxiedPlayer partyOwner;
 	public ArrayList<ProxiedPlayer> partyPlayers = new ArrayList<ProxiedPlayer>();
-	public ArrayList<ProxiedPlayer> partyRequests = new ArrayList<ProxiedPlayer>();
 	
 	
 	public Party(ProxiedPlayer partyOwner) {
 		this.partyOwner = partyOwner;
 	}
 	
+	public void setPartyOwner(ProxiedPlayer partyOwner) {
+		this.partyOwner = partyOwner;
+	}
 	public ProxiedPlayer getPartyOwner() {
 		return partyOwner;
 	}
 	
+	public void setPartyPlayers(ArrayList<ProxiedPlayer> partyPlayers) {
+		this.partyPlayers = partyPlayers;
+	}
 	public ArrayList<ProxiedPlayer> getPartyPlayers() {
 		return partyPlayers;
-	}
-	
-	public ArrayList<ProxiedPlayer> getPartyRequests() {
-		return partyRequests;
 	}
 	
 }

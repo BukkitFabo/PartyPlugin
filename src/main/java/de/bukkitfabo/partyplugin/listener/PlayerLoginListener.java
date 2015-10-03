@@ -1,6 +1,7 @@
-package de.BukkitFabo.Listener;
+package de.bukkitfabo.partyplugin.listener;
 
-import de.BukkitFabo.PartyPlugin.Main;
+
+import de.bukkitfabo.partyplugin.Main;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.plugin.Listener;
@@ -11,9 +12,8 @@ public class PlayerLoginListener implements Listener {
 	@EventHandler
 	public void onPlayerLogin(ServerConnectEvent e) {
 		ProxiedPlayer p = e.getPlayer();
-		if(Main.sql.getToggleTP(p.getName()) == null) {
-			Main.sql.queryUpdate("INSERT INTO `PartyPlugin` (Player, ToggleTP) VALUES ('" + p.getName() + "', 0)");
-		}
+		Main.getSQL().createStatement("INSERT INTO IGNORE `PartyPlugin` (PlayerUUID) VALUES (:PlayerUUID)")
+		.bind("PlayerUUID", p.getUniqueId().toString()).execute();
 	}
 	
 }

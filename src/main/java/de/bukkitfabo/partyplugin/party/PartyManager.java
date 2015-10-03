@@ -1,23 +1,25 @@
-package de.BukkitFabo.Party;
+package de.bukkitfabo.partyplugin.party;
+
 
 import java.util.HashMap;
 import java.util.Random;
 
+import org.skife.jdbi.v2.util.IntegerMapper;
+
+import de.bukkitfabo.partyplugin.Main;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ClickEvent.Action;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import de.BukkitFabo.PartyPlugin.Main;
 
 public class PartyManager {
 
 	public static HashMap<ProxiedPlayer, Party> playerparty = new HashMap<ProxiedPlayer, Party>();
 	public static HashMap<ProxiedPlayer, ProxiedPlayer> partyrequest = new HashMap<ProxiedPlayer, ProxiedPlayer>();
 	
-	@SuppressWarnings("deprecation")
-	public static void sendPartyRequest(ProxiedPlayer player, Party party) {
-		player.sendMessage(Main.prefix + "§7Du wurderst von §5" + party.getPartyOwner().getName() + " §7in die Party eingeladen.");		
+	public void sendPartyRequest(ProxiedPlayer player, Party party) {
+		player.sendMessage(new TextComponent(Main.prefix + "§7Du wurderst von §5" + party.getPartyOwner().getName() + " §7in die Party eingeladen."));		
 		
 		TextComponent message1 = new TextComponent("§7Bestätige §7mit ");
 		TextComponent message2 = new TextComponent("§a/party §aaccept " + party.getPartyOwner().getName());
@@ -32,14 +34,10 @@ public class PartyManager {
 		message1.addExtra(message5);
 		player.sendMessage(message1);
 		
-		
-		//IChatBaseComponent baseComponent = ChatSerializer.a("[{\"text\":\""+"§6"+   (i+1)+". §5" + songs.get(i)+   "\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/radio vote " + (i+1) + "\"}}]");
-        //PacketPlayOutChat packet = new PacketPlayOutChat(baseComponent);
-        //((CraftPlayer) c).getHandle().playerConnection.sendPacket(packet);
 		partyrequest.put(player, party.getPartyOwner());
 	}
 	
-	public static void addPlayerToParty(ProxiedPlayer player, Party party) {
+	public void addPlayerToParty(ProxiedPlayer player, Party party) {
 		
 		playerparty.put(player, party);
 		party.partyPlayers.add(player);
@@ -47,7 +45,7 @@ public class PartyManager {
 		
 	}
 	
-	public static void removePlayerFromParty(ProxiedPlayer player, Party party) {
+	public void removePlayerFromParty(ProxiedPlayer player, Party party) {
 		
 		party.partyPlayers.remove(player);
 		playerparty.remove(player);
@@ -63,37 +61,33 @@ public class PartyManager {
 		
 	}
 	
-	@SuppressWarnings("deprecation")
-	public static void sendPartyMessage(Party party, String message) {
+	public void sendPartyMessage(Party party, String message) {
 		
 		for(ProxiedPlayer player : party.getPartyPlayers()) {
-			player.sendMessage(Main.prefix + "" + message);
+			player.sendMessage(new TextComponent(Main.prefix + "" + message));
 		}
 		
 	}
 	
-	@SuppressWarnings("deprecation")
-	public static void sendPartyToServer(Party party, ServerInfo server) {
+	public void sendPartyToServer(Party party, ServerInfo server) {
 		
 		for(ProxiedPlayer player : party.getPartyPlayers()) {
 			if(player == party.getPartyOwner()) continue;
-			if(hasToggledTP(player)) continue;
 			player.connect(server);
-			player.sendMessage(Main.prefix + "§7Die Party betritt den Server §6" + server.getName());
+			player.sendMessage(new TextComponent(Main.prefix + "§7Die Party betritt den Server §6" + server.getName()));
 		}
 		
 	}
 	
-	public static void setNewPartyOwner(ProxiedPlayer player, Party party) {
+	public void setNewPartyOwner(ProxiedPlayer player, Party party) {
 		party.partyOwner = player;
 		sendPartyMessage(party, "§7Der Spieler §5" + player.getName() + " §7ist der neue PartyOwner.");
 	}
 	
-	public static boolean hasToggledTP(ProxiedPlayer player) {
-		return (Main.sql.getToggleTP(player.getName()) == 1) ? true : false;
+	public boolean getPartyToggle(ProxiedPlayer player) {
+		boolean toggle = (Main.getSQL().createQuery("SELECT `PartyToggle` FROM `PartyPlugin` WHERE `PlayerUUID` = :PlayerUUID")
+				.bind("PlayerUUID", player.getUniqueId().toString()).map(IntegerMapper.FIRST).first() == 1 ? true : false);
+		return toggle;
 	}
 	
-	public static void setToggleTP(ProxiedPlayer player, boolean toggleTP) {
-		Main.sql.setToggleTP(player.getName(), toggleTP);
-	}
 }
